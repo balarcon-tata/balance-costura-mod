@@ -8441,7 +8441,7 @@ procesarPrograma = function(workbook) {
     }
   }
 
-  const registros = [...mapa.values()].sort((a,b)=>a.semana-b.semana || String(a.linea).localeCompare(String(b.linea)) || String(a.orden).localeCompare(String(b.orden)));
+  const registros = [...mapa.values()].sort((a,b)=>MOD8_SEMANAS.indexOf(a.semana) - MOD8_SEMANAS.indexOf(b.semana) || String(a.linea).localeCompare(String(b.linea)) || String(a.orden).localeCompare(String(b.orden)));
   mod8CeldasDiariasPrograma = celdasDiarias;
   console.log(`COSTURA DEMANDA: ${registros.length} registros semanales | celdas con unidades ${celdasConUnidades} | columnas fecha ${colsFecha.length} | fuera rango ${fueraSemana}`);
   return registros;
@@ -9893,7 +9893,7 @@ if (document.readyState === 'loading') {
         }
       }
     });
-    const registros = [...mapa.values()].sort((a,b)=>a.semana-b.semana || String(a.linea).localeCompare(String(b.linea)) || String(a.orden).localeCompare(String(b.orden)) || String(a.hojaTipo).localeCompare(String(b.hojaTipo)));
+    const registros = [...mapa.values()].sort((a,b)=>MOD8_SEMANAS.indexOf(a.semana) - MOD8_SEMANAS.indexOf(b.semana) || String(a.linea).localeCompare(String(b.linea)) || String(a.orden).localeCompare(String(b.orden)) || String(a.hojaTipo).localeCompare(String(b.hojaTipo)));
     mod8CeldasDiariasPrograma = celdasDiarias;
     console.log(`COSTURA DEMANDA MOD: ${registros.length} registros semanales | hojas ${hojasLeidas} | celdas con unidades ${celdasConUnidades} | fuera rango ${fueraSemana}`);
     return registros;
