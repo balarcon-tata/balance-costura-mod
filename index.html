@@ -3187,6 +3187,26 @@ body.light-mode .balance-visual-cost-unit-row th {
 .mod8-ops-title{font-weight:800;margin:4px 0 10px;color:var(--text-1);letter-spacing:.03em;text-transform:uppercase;font-size:.76rem}.mod8-ops-hc-table{width:100%;border-collapse:collapse;font-size:.78rem;background:rgba(255,255,255,.03);border:1px solid var(--border)}.mod8-ops-hc-table th,.mod8-ops-hc-table td{padding:8px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);white-space:nowrap}.mod8-ops-hc-table th{background:var(--surface2);font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3)}.mod8-ops-hc-table td.num{text-align:right;font-family:var(--font-mono);font-weight:700}.mod8-ops-row td,.balance-visual-group-ops td{background:rgba(79,142,247,.035)!important}.mod8-ops-empty{color:var(--text-3);font-size:.78rem}
 body.light-mode .mod8-ops-hc-table{background:#fff}body.light-mode .mod8-ops-row td,body.light-mode .balance-visual-group-ops td{background:#f8fafc!important}
 </style>
+<script>
+customElements.define('mod-eficiencia-actual', class extends HTMLElement {
+  connectedCallback() {
+    if (this.firstElementChild) return;
+    this.innerHTML = '<label><span>Eficiencia Actual</span><strong><input type="number" min="0" step="any" placeholder="—" aria-label="Eficiencia actual en porcentaje"> %</strong></label><em>Registro manual</em>';
+    const campo = this.querySelector('input');
+    const clave = location.pathname.split('/').filter(Boolean)[0] + '.eficienciaActual';
+    campo.value = localStorage.getItem(clave) || '';
+    campo.addEventListener('change', () => {
+      if (campo.reportValidity()) localStorage.setItem(clave, campo.value);
+    });
+  }
+});
+</script>
+<style>
+mod-eficiencia-actual {display:block}
+mod-eficiencia-actual label, mod-eficiencia-actual label > span, mod-eficiencia-actual strong {display:block}
+mod-eficiencia-actual input[type=number] {width:6ch;font:inherit;color:inherit;background:transparent;border:0;border-bottom:1px solid currentColor}
+@media(min-width:1100px){#balanceResumenVisualCards:has(mod-eficiencia-actual){grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column}}
+</style>
 </head>
 <body>
 
@@ -6396,7 +6416,7 @@ function renderizarResumenVisualBalance() {
     <span class="balance-visual-badge">Promedio semana <strong>${promedioDia.toFixed(1)}</strong></span>`;
 
   cards.innerHTML = `
-    <div class="balance-visual-card"><span>Mayor carga semanal</span><strong>${totalPorDia[isoMayor].toFixed(1)}</strong><em>${nombreEncabezadoDia(isoMayor)}</em></div>
+    <div class="balance-visual-card"><span>Mayor carga semanal</span><strong>${totalPorDia[isoMayor].toFixed(1)}</strong><em>${nombreEncabezadoDia(isoMayor)}</em></div><mod-eficiencia-actual class="balance-visual-card"></mod-eficiencia-actual>
     <div class="balance-visual-card"><span>Línea crítica</span><strong>${lineaMayor.promedio.toFixed(1)}</strong><em>${esc(lineaMayor.linea)} · promedio 8 semanas</em></div>
     <div class="balance-visual-card"><span>Promedio por semana</span><strong>${promedioDia.toFixed(1)}</strong><em>HC semanal promedio</em></div>
     <div class="balance-visual-card"><span>Periodos evaluados</span><strong>${fechas.length}</strong><em>${fechaIni} → ${fechaFin}</em></div>`;
@@ -9285,7 +9305,7 @@ renderizarResumenVisualBalance = function() {
 
   if (sub) sub.textContent = `${fechaIni} a ${fechaFin} · ${grupos.length} grupos con HC`;
   badges.innerHTML = `<span class="balance-visual-badge">Fuente <strong>${fuenteActiva === 'proyeccion' ? 'Proyección' : 'Programa'}</strong></span><span class="balance-visual-badge">Grupos <strong>${grupos.length}</strong></span><span class="balance-visual-badge">Promedio periodo <strong>${promedioSemana.toFixed(1)}</strong></span>`;
-  cards.innerHTML = `<div class="balance-visual-card"><span>Mayor carga semanal</span><strong>${totalPorSemana[isoMayor].toFixed(1)}</strong><em>${nombreEncabezadoDia(isoMayor)}</em></div><div class="balance-visual-card"><span>Grupo crítico</span><strong>${grupoMayor.promedio.toFixed(1)}</strong><em>${esc(grupoMayor.grupo)} · promedio 8 semanas</em></div><div class="balance-visual-card"><span>Promedio por semana</span><strong>${promedioSemana.toFixed(1)}</strong><em>HC semanal promedio</em></div><div class="balance-visual-card"><span>Semanas evaluadas</span><strong>${fechas.length}</strong><em>${fechaIni} → ${fechaFin}</em></div>`;
+  cards.innerHTML = `<div class="balance-visual-card"><span>Mayor carga semanal</span><strong>${totalPorSemana[isoMayor].toFixed(1)}</strong><em>${nombreEncabezadoDia(isoMayor)}</em></div><mod-eficiencia-actual class="balance-visual-card"></mod-eficiencia-actual><div class="balance-visual-card"><span>Grupo crítico</span><strong>${grupoMayor.promedio.toFixed(1)}</strong><em>${esc(grupoMayor.grupo)} · promedio 8 semanas</em></div><div class="balance-visual-card"><span>Promedio por semana</span><strong>${promedioSemana.toFixed(1)}</strong><em>HC semanal promedio</em></div><div class="balance-visual-card"><span>Semanas evaluadas</span><strong>${fechas.length}</strong><em>${fechaIni} → ${fechaFin}</em></div>`;
 
   const thDias = fechas.map(iso => `<th>${nombreEncabezadoDia(iso)}</th>`).join('');
   const rows = grupos.map(r => {
